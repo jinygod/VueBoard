@@ -24,10 +24,9 @@
 <nav>
   <ul class="pagination">
     <!-- 이전 버튼 -->
-    <li class="page-item" :class="{ 'disabled': currentPage === 1 }">
-      <button class="page-link" @click="prevPage">이전</button>
+    <li class="page-item" :class="{ 'disabled': currentPage <= 10 }">
+      <button class="page-link" @click="prevPage" :disabled="currentPage <= 10">이전</button>
     </li>
-    
     <!-- 페이지 버튼 -->
     <li class="page-item" v-for="pageNumber in visiblePageNumbers" :key="pageNumber" :class="{ 'active': currentPage === pageNumber }">
       <button class="page-link" @click="goToPage(pageNumber)">{{ pageNumber }}</button>
@@ -91,17 +90,22 @@ export default {
       const currentPageGroup = Math.ceil(this.currentPage / 10);
       const startPage = (currentPageGroup - 1) * 10 + 1;
       const endPage = Math.min(this.totalPages, currentPageGroup * 10);
-      return Array(endPage - startPage + 1).fill().map((_, index) => startPage + index);
+      return Array(endPage - startPage + 1)
+        .fill()
+        .map((_, index) => startPage + index)
+        .filter((pageNumber) => pageNumber > 0); // 1보다 작은 페이지 제외
     },
     paginatedPosts() {
       const startIndex = (this.currentPage - 1) * this.pageSize;
       const endIndex = startIndex + this.pageSize;
       return this.posts.slice(startIndex, endIndex);
     },
+    isAllDataVisible() {
+    return this.currentPage === 1 && this.totalPages <= 10;
+    },
     hasNextPage() {
       return this.currentPage < this.totalPages;
     },
-  
   },
   methods: {
     formatDate(dateString) {
