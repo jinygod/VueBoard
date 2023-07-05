@@ -38,6 +38,11 @@
     </li>
   </ul>
 </nav>
+<div class="row">
+    <div class="col text-end">
+      <button class="btn btn-primary write-button" @click="goToWritePost">글 쓰기</button>
+    </div>
+</div>
   </div>
 </template>
 <style>
@@ -68,6 +73,13 @@
   justify-content: center;
   align-items: center;
 }
+
+.write-button-container {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 10px;
+}
+
 
 .pagination button {
   margin: 0 5px;
@@ -106,6 +118,7 @@ export default {
     hasNextPage() {
       return this.currentPage < this.totalPages;
     },
+
   },
   methods: {
     formatDate(dateString) {
@@ -145,6 +158,10 @@ export default {
       this.currentPage = pageNumber;
     },
   },
+      goToWritePost() {
+      // 글 쓰기 페이지로 이동하는 메소드
+      this.$router.push('/write-post');
+    },
   mounted() {
     this.fetchPosts(); // 컴포넌트가 마운트되면 게시글 목록을 가져오도록 호출
   },
