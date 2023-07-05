@@ -1,5 +1,5 @@
 <template>
-  <div class="table-containers">
+  <div class="table-container">
     <h1>Vue Board</h1>
     <!-- 글 목록 표시 -->
     <table class="table table-hover custom-table">
@@ -13,7 +13,7 @@
       </thead>
       <tbody>
         <!-- 글 목록 아이템 반복 표시 -->
-        <tr v-for="post in posts" :key="post.id" @click="handlePostClick(post)">
+        <tr v-for="post in paginatedPosts" :key="post.id" @click="handlePostClick(post)">
           <td>{{ post.id }}</td>
           <td>{{ post.title }}</td>
           <td>{{ post.author }}</td>
@@ -21,14 +21,31 @@
         </tr>
       </tbody>
     </table>
+<nav>
+  <ul class="pagination">
+    <!-- 이전 버튼 -->
+    <li class="page-item" :class="{ 'disabled': currentPage === 1 }">
+      <button class="page-link" @click="prevPage">이전</button>
+    </li>
+    
+    <!-- 페이지 버튼 -->
+    <li class="page-item" v-for="pageNumber in visiblePageNumbers" :key="pageNumber" :class="{ 'active': currentPage === pageNumber }">
+      <button class="page-link" @click="goToPage(pageNumber)">{{ pageNumber }}</button>
+    </li>
+
+    <!-- 다음 버튼 -->
+    <li class="page-item" :class="{ 'disabled': currentPage === totalPages }">
+      <button class="page-link" @click="nextPage">다음</button>
+    </li>
+  </ul>
+</nav>
   </div>
 </template>
 <style>
 .table-container {
   display: flex;
-  justify-content: center;
+  flex-direction: column;
   align-items: center;
-  height: 50%;
 }
 
 .custom-table {
@@ -45,13 +62,46 @@
 .highlight-cell {
   color: blue;
 }
+
+.pagination {
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.pagination button {
+  margin: 0 5px;
+}
 </style>
 <script>
 export default {
   data() {
     return {
       posts: [], // 게시글 목록을 빈 배열로 초기화
+      currentPage: 1, // 현재 페이지
+      pageSize: 10, // 한 페이지에 보여줄 게시글 수
     };
+  },
+  computed: {
+    totalPages() {
+      return Math.ceil(this.posts.length / this.pageSize);
+    },
+    visiblePageNumbers() {
+      const currentPageGroup = Math.ceil(this.currentPage / 10);
+      const startPage = (currentPageGroup - 1) * 10 + 1;
+      const endPage = Math.min(this.totalPages, currentPageGroup * 10);
+      return Array(endPage - startPage + 1).fill().map((_, index) => startPage + index);
+    },
+    paginatedPosts() {
+      const startIndex = (this.currentPage - 1) * this.pageSize;
+      const endIndex = startIndex + this.pageSize;
+      return this.posts.slice(startIndex, endIndex);
+    },
+    hasNextPage() {
+      return this.currentPage < this.totalPages;
+    },
+  
   },
   methods: {
     formatDate(dateString) {
@@ -73,6 +123,22 @@ export default {
         .catch(error => {
           console.log('Error fetching posts:', error);
         });
+    },
+    prevPage() {
+      if (this.currentPage > 1) {
+        this.currentPage -= 10;
+      }
+    },
+    nextPage() {
+      if (this.hasNextPage) {
+        this.currentPage += 10;
+        if (this.currentPage > this.totalPages) {
+          this.currentPage = this.totalPages;
+        }
+      }
+    },
+        goToPage(pageNumber) {
+      this.currentPage = pageNumber;
     },
   },
   mounted() {
