@@ -40,7 +40,9 @@
 </nav>
 <div class="row">
     <div class="col text-end">
-      <button class="btn btn-primary write-button" @click="goToWritePost">글 쓰기</button>
+      <router-link to="/write" v-slot="{navigate}">
+       <button class="btn btn-primary" @click="navigate">글 쓰기</button>
+       </router-link>
     </div>
 </div>
   </div>
@@ -158,10 +160,6 @@ export default {
       this.currentPage = pageNumber;
     },
   },
-      goToWritePost() {
-      // 글 쓰기 페이지로 이동하는 메소드
-      this.$router.push('/write-post');
-    },
   mounted() {
     this.fetchPosts(); // 컴포넌트가 마운트되면 게시글 목록을 가져오도록 호출
   },

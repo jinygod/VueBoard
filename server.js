@@ -30,12 +30,12 @@ const fetchPostsFromDB = async () => {
 };
 
 app.post('/posts', async (req, res) => {
-  const { title, author, date, views } = req.body;
-  const newPost = { title, author, date, views };
+  const { title, author, context, date, views } = req.body;
+  const newPost = { title, author, context, date, views };
 
   try {
-    const query = 'INSERT INTO posts (title, author, date, views) VALUES ($1, $2, $3, $4) RETURNING *';
-    const values = [title, author, date, views];
+    const query = 'INSERT INTO posts (title, author, context, date, views) VALUES ($1, $2, $3, $4, $5) RETURNING *';
+    const values = [title, author, context, date, views];
     const result = await pool.query(query, values);
     posts.push(result.rows[0]);
     res.json(result.rows[0]);
