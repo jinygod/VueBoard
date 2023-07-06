@@ -29,22 +29,6 @@ const fetchPostsFromDB = async () => {
   }
 };
 
-app.post('/posts', async (req, res) => {
-  const { title, author, context, date, views } = req.body;
-  const newPost = { title, author, context, date, views };
-
-  try {
-    const query = 'INSERT INTO posts (title, author, context, date, views) VALUES ($1, $2, $3, $4, $5) RETURNING *';
-    const values = [title, author, context, date, views];
-    const result = await pool.query(query, values);
-    posts.push(result.rows[0]);
-    res.json(result.rows[0]);
-  } catch (error) {
-    console.log(error);
-    res.status(500).json({ error: 'An error occurred while creating a new post' });
-  }
-});
-
 app.get('/posts', async (req, res) => {
   try {
     const query = 'SELECT * FROM posts'; // posts 테이블에서 모든 데이터를 조회하는 SQL 쿼리
@@ -58,8 +42,25 @@ app.get('/posts', async (req, res) => {
   }
 });
 
+app.post('/posts', async (req, res) => {
+  const { title, author, context, date, views } = req.body;
+  const newPost = { title, author, context, date, views };
+
+  try {
+    const query = 'INSERT INTO posts (title, author, context, date, views) VALUES ($1, $2, $3, $4, $5) RETURNING *'; // SQL injection 방지 가능
+    const values = [title, author, context, date, views];
+    const result = await pool.query(query, values);
+    posts.push(result.rows[0]);
+    res.json(result.rows[0]);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: 'An error occurred while creating a new post' });
+  }
+});
+
 app.delete('/posts/:id', async (req, res) => {
   const id = req.params.id; // 요청 URL에서 post id를 추출합니다.
+
   try {
     const query = 'DELETE FROM posts WHERE id = $1';
     const values = [id];
@@ -71,7 +72,21 @@ app.delete('/posts/:id', async (req, res) => {
   }
 });
 
+app.put('/posts/:id', async(req, res) =>{
+  const id = req.params.id; // 요청 URL에서 post id를 추출합니다.
+  const { title, context } = req.body; // 요청 본문에서 title과 context를 추출
 
+  try{
+    const query = 'UPDATE posts SET $1, context = $2 WHERE id = $3';
+    const values = [title, context, id];
+
+    await pool.query(query, values); // UPDATE SQL 명령 실행
+    res.json({ message : `Post with id ${id} was updated successfully.` });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: 'An error occured while updating the post'})
+  }
+});
 
 // PostgreSQL 연결 확인
 pool.connect((err, client, done) => {

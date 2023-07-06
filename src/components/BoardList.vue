@@ -33,7 +33,6 @@
     <li class="page-item" v-for="pageNumber in visiblePageNumbers" :key="pageNumber" :class="{ 'active': currentPage === pageNumber }">
       <button class="page-link" @click="goToPage(pageNumber)">{{ pageNumber }}</button>
     </li>
-
     <!-- 다음 버튼 -->
     <li class="page-item" :class="{ 'disabled': currentPage === totalPages }">
       <button class="page-link" @click="nextPage">다음</button>
