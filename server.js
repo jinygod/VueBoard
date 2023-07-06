@@ -58,6 +58,20 @@ app.get('/posts', async (req, res) => {
   }
 });
 
+app.delete('/posts/:id', async (req, res) => {
+  const id = req.params.id; // 요청 URL에서 post id를 추출합니다.
+  try {
+    const query = 'DELETE FROM posts WHERE id = $1';
+    const values = [id];
+    await pool.query(query, values); // DELETE SQL 명령을 실행합니다.
+    res.json({ message: `Post with id ${id} was deleted successfully.` });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: 'An error occurred while deleting the post' });
+  }
+});
+
+
 
 // PostgreSQL 연결 확인
 pool.connect((err, client, done) => {

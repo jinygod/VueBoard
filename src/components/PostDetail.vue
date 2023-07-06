@@ -12,6 +12,7 @@
           <p>내용: {{ post.context }}</p>
         </div>
         <div class="modal-footer">
+          <button type="button" class="btn btn-danger" @click="deletePost">Delete</button>
           <button type="button" class="btn btn-secondary" @click="closeModal">Close</button>
         </div>
       </div>
@@ -20,6 +21,8 @@
 </template>
 
 <script>
+import axios from 'axios';
+
 export default {
   props: {
     post: {
@@ -39,6 +42,15 @@ export default {
       const options = { year: "numeric", month: "long", day: "numeric" };
       const date = new Date(dateString);
       return date.toLocaleDateString(undefined, options);
+    },
+    async deletePost() {
+      try {
+        await axios.delete(`http://localhost:3001/posts/${this.post.id}`);
+        this.$emit('postDeleted'); // post가 삭제되었다는 이벤트를 발생시킴
+        this.closeModal();
+      } catch (error) {
+        console.log(error);
+      }
     },
   }
 }

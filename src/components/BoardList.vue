@@ -22,7 +22,7 @@
       </tbody>
     </table>
     <!-- Post Detail Modal -->
- <post-detail :post="selectedPost" :showModal="showPostDetail" v-if="showPostDetail" @close="showPostDetail = false" />
+ <post-detail :post="selectedPost" :showModal="showPostDetail" v-if="showPostDetail" @close="showPostDetail = false" @postDeleted="fetchPosts" />
 <nav>
   <ul class="pagination">
     <!-- 이전 버튼 -->
@@ -164,9 +164,12 @@ export default {
         }
       }
     },
-        goToPage(pageNumber) {
+    goToPage(pageNumber) {
       this.currentPage = pageNumber;
     },
+    created(){
+      this.fetchPosts();
+    }
   },
   mounted() {
     this.fetchPosts(); // 컴포넌트가 마운트되면 게시글 목록을 가져오도록 호출
