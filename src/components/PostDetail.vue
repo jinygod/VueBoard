@@ -1,5 +1,5 @@
 <template>
-   <div v-if="showModal" class="modal" tabindex="-1" style="display: block;">
+   <div v-if="showModal" class="modal d-flex align-items-center justify-content-center" tabindex="-1" style="display: block;">
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
@@ -80,7 +80,10 @@ export default {
   position: relative;
   display: flex;
   flex-direction: column;
-  width: 100%;
+  width: 500px;
+  height: 600px;
+  max-width: 100%;
+  max-height: 100%;
   pointer-events: auto;
   background-color: #fff;
   background-clip: padding-box;
