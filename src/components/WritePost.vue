@@ -44,6 +44,7 @@ export default {
       try {
         const response = await axios.post('http://localhost:3001/posts', post);
         console.log(response.data);
+        alert('등록되었습니다.')
         this.$router.push('/'); // 글 작성후 '/' 경로로 이동
       } catch (error) {
         console.error('An error occurred while creating a new post:', error);

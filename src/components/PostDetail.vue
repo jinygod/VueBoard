@@ -47,6 +47,7 @@ export default {
       try {
         await axios.delete(`http://localhost:3001/posts/${this.post.id}`);
         this.$emit('postDeleted'); // post가 삭제되었다는 이벤트를 발생시킴
+        alert('삭제되었습니다.');
         this.closeModal();
       } catch (error) {
         console.log(error);
