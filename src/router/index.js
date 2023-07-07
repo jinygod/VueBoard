@@ -1,7 +1,7 @@
-import { createRouter, createWebHistory } from 'vue-router';
-import BoardList from '@/components/BoardList.vue';
-import PostDetail from '@/components/PostDetail.vue';
-import WritePost from '@/components/WritePost.vue';
+import { createRouter, createWebHistory } from 'vue-router'
+import BoardList from '@/components/BoardList.vue'
+import PostDetail from '@/components/PostDetail.vue'
+import WritePost from '@/components/WritePost.vue'
 
 const routes = [
   {
@@ -19,11 +19,11 @@ const routes = [
     name: 'WritePost',
     component: WritePost,
   },
-];
+]
 
 const router = createRouter({
   history: createWebHistory(),
   routes,
-});
+})
 
-export default router;
+export default router
