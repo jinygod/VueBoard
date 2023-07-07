@@ -116,11 +116,11 @@ import PostDetail from './PostDetail.vue'
 export default {
   data() {
     return {
-      posts: [], // 게시글 목록을 빈 배열로 초기화
-      currentPage: 1, // 현재 페이지
-      pageSize: 10, // 한 페이지에 보여줄 게시글 수
-      showPostDetail: false, // Post Detail Modal show/hide
-      selectedPost: null, // 현재 선택된 게시물을 저장
+      posts: [],
+      currentPage: 1,
+      pageSize: 10,
+      showPostDetail: false,
+      selectedPost: null,
     }
   },
   computed: {
@@ -131,21 +131,21 @@ export default {
       const currentPageGroup = Math.ceil(this.currentPage / 10)
       const startPage = (currentPageGroup - 1) * 10 + 1
       const endPage = Math.min(this.totalPages, currentPageGroup * 10)
-      return Array(endPage - startPage + 1)
-        .fill()
-        .map((_, index) => startPage + index)
-        .filter((pageNumber) => pageNumber > 0) // 1보다 작은 페이지 제외
+      return Array.from(
+        { length: endPage - startPage + 1 },
+        (_, i) => i + startPage
+      )
     },
     paginatedPosts() {
       const startIndex = (this.currentPage - 1) * this.pageSize
       const endIndex = startIndex + this.pageSize
       return this.posts.slice(startIndex, endIndex)
     },
-    isAllDataVisible() {
-      return this.currentPage === 1 && this.totalPages <= 10
+    isFirstPage() {
+      return this.currentPage <= 10
     },
-    hasNextPage() {
-      return this.currentPage < this.totalPages
+    isLastPage() {
+      return this.currentPage === this.totalPages
     },
   },
   methods: {
@@ -155,10 +155,8 @@ export default {
       return date.toLocaleDateString(undefined, options)
     },
     handlePostClick(post) {
-      // 클릭한 글에 대한 동작 처리
-      console.log('Clicked post:', post)
-      this.selectedPost = post // 선택된 게시물 설정
-      this.showPostDetail = true // 모달 보이기
+      this.selectedPost = post
+      this.showPostDetail = true
     },
     async fetchPosts() {
       try {
@@ -170,27 +168,21 @@ export default {
       }
     },
     prevPage() {
-      if (this.currentPage > 1) {
+      if (!this.isFirstPage) {
         this.currentPage -= 10
       }
     },
     nextPage() {
-      if (this.hasNextPage) {
+      if (!this.isLastPage) {
         this.currentPage += 10
-        if (this.currentPage > this.totalPages) {
-          this.currentPage = this.totalPages
-        }
       }
     },
     goToPage(pageNumber) {
       this.currentPage = pageNumber
     },
-    created() {
-      this.fetchPosts()
-    },
   },
-  mounted() {
-    this.fetchPosts() // 컴포넌트가 마운트되면 게시글 목록을 가져오도록 호출
+  created() {
+    this.fetchPosts()
   },
   components: {
     PostDetail,
