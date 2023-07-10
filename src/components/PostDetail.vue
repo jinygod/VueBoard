@@ -1,5 +1,10 @@
 <template>
-   <div v-if="showModal" class="modal d-flex align-items-center justify-content-center" tabindex="-1" style="display: block;">
+  <div
+    v-if="showModal"
+    class="modal d-flex align-items-center justify-content-center"
+    tabindex="-1"
+    style="display: block"
+  >
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
@@ -12,8 +17,12 @@
           <p>내용: {{ post.context }}</p>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-danger" @click="deletePost">Delete</button>
-          <button type="button" class="btn btn-secondary" @click="closeModal">Close</button>
+          <button type="button" class="btn btn-danger" @click="deletePost">
+            Delete
+          </button>
+          <button type="button" class="btn btn-secondary" @click="closeModal">
+            Close
+          </button>
         </div>
       </div>
     </div>
@@ -21,39 +30,38 @@
 </template>
 
 <script>
-import axios from 'axios';
 
 export default {
   props: {
     post: {
       type: Object,
-      required: true
+      required: true,
     },
     showModal: {
       type: Boolean,
-      required: true
-    }
+      required: true,
+    },
   },
   methods: {
     closeModal() {
-      this.$emit('close');
+      this.$emit('close')
     },
     formatDate(dateString) {
-      const options = { year: "numeric", month: "long", day: "numeric" };
-      const date = new Date(dateString);
-      return date.toLocaleDateString(undefined, options);
+      const options = { year: 'numeric', month: 'long', day: 'numeric' }
+      const date = new Date(dateString)
+      return date.toLocaleDateString(undefined, options)
     },
     async deletePost() {
       try {
-        await axios.delete(`http://localhost:3001/posts/${this.post.id}`);
-        this.$emit('postDeleted'); // post가 삭제되었다는 이벤트를 발생시킴
-        alert('삭제되었습니다.');
-        this.closeModal();
+        await axios.delete(`http://localhost:3001/posts/${this.post.id}`)
+        this.$emit('postDeleted') // post가 삭제되었다는 이벤트를 발생시킴
+        alert('삭제되었습니다.')
+        this.closeModal()
       } catch (error) {
-        console.log(error);
+        console.log(error)
       }
     },
-  }
+  },
 }
 </script>
 
@@ -67,7 +75,7 @@ export default {
   height: 100vh;
   overflow: hidden;
   outline: 0;
-  background-color: rgba(0, 0, 0, .5);
+  background-color: rgba(0, 0, 0, 0.5);
 }
 
 .modal-dialog {
@@ -88,8 +96,8 @@ export default {
   pointer-events: auto;
   background-color: #fff;
   background-clip: padding-box;
-  border: 1px solid rgba(0, 0, 0, .2);
-  border-radius: .3rem;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  border-radius: 0.3rem;
   outline: 0;
 }
 </style>
