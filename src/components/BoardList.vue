@@ -32,6 +32,7 @@
       v-if="showPostDetail"
       @close="showPostDetail = false"
       @postDeleted="fetchPosts"
+      @postUpdated="fetchPosts"
     />
     <nav>
       <ul class="pagination">

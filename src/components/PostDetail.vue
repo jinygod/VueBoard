@@ -8,21 +8,41 @@
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title">{{ post.title }}</h5>
+          <h5 class="modal-title">{{ editingMode ? editedPost.title : post.title }}</h5>
           <button type="button" class="btn-close" @click="closeModal"></button>
         </div>
         <div class="modal-body">
           <p>작성자: {{ post.author }}</p>
           <p>날짜: {{ formatDate(post.date) }}</p>
-          <p>내용: {{ post.context }}</p>
+          <p>내용: {{ editingMode ? editedPost.context : post.context }}</p>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-danger" @click="deletePost">
             Delete
           </button>
+          <button
+            v-if="!editingMode" 
+            type="button"
+            class="btn btn-primary"
+            @click="toggleEditingMode"
+          >
+            Edit
+          </button>
+          <button
+            v-else 
+            type="button"
+            class="btn btn-success"
+            @click="updatePost"
+          >
+            Save
+          </button>
           <button type="button" class="btn btn-secondary" @click="closeModal">
             Close
           </button>
+        </div>
+        <div v-if="editingMode"> <!-- 입력 가능한 블록 추가 -->
+          <input v-model="editedPost.title" class="form-control" placeholder="Title" />
+          <textarea v-model="editedPost.context" class="form-control" placeholder="Content"></textarea>
         </div>
       </div>
     </div>
@@ -43,6 +63,15 @@ export default {
       required: true,
     },
   },
+  data() {
+    return {
+      editingMode: false,
+      editedPost: {
+        title: '',
+        context: '',
+      },
+    };
+  },
   methods: {
     closeModal() {
       this.$emit('close')
@@ -52,14 +81,36 @@ export default {
       const date = new Date(dateString)
       return date.toLocaleDateString(undefined, options)
     },
+    toggleEditingMode() { // 수정 모드를 토글하는 메서드로 변경
+      this.editingMode = !this.editingMode;
+      if (this.editingMode) {
+        this.editedPost.title = this.post.title;
+        this.editedPost.context = this.post.context;
+      }
+    },
+    async updatePost() {
+      const { id } = this.post;
+
+      try {
+        await axios.put(`http://localhost:3001/posts/${id}`, this.editedPost);
+        this.$emit('postUpdated');
+        alert(`Post with id ${id} was updated successfully.`);
+        this.closeModal();
+
+        // 글을 수정한 후에 글 목록을 다시 정렬하여 업데이트
+        this.$emit('refreshPostList'); // 부모 컴포넌트에 이벤트를 발생시켜 글 목록을 다시 로드하도록 요청
+      } catch (error) {
+        console.log(error);
+      }
+    },
     async deletePost() {
       try {
-        await axios.delete(`http://localhost:3001/posts/${this.post.id}`)
-        this.$emit('postDeleted') // post가 삭제되었다는 이벤트를 발생시킴
-        alert(`${this.post.id}번 글이 삭제되었습니다.`)
-        this.closeModal()
+        await axios.delete(`http://localhost:3001/posts/${this.post.id}`);
+        this.$emit('postDeleted');
+        alert(`${this.post.id}번 글이 삭제되었습니다.`);
+        this.closeModal();
       } catch (error) {
-        console.log(error)
+        console.log(error);
       }
     },
   },
@@ -102,3 +153,4 @@ export default {
   outline: 0;
 }
 </style>
+
