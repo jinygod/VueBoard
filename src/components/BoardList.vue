@@ -163,7 +163,9 @@ export default {
       try {
         const response = await fetch('http://localhost:3001/posts')
         const data = await response.json()
-        this.posts = data
+
+        // 번호순으로 정렬
+        this.posts = data.sort((a,b) => a.id - b.id); 
       } catch (error) {
         console.log('Error fetching posts:', error)
       }
